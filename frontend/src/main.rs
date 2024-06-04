@@ -16,15 +16,13 @@ async fn main() {
         .route("/", get(get_page).post(post_contact))
         .route("/:index", get(remove_contacts));
 
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
-        .await
-        .unwrap();
-    println!("Listening on http://127.0.0.1:3000");
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    println!("Listening on http://0.0.0.0:3000");
     axum::serve(listener, app).await.unwrap();
 }
 
 async fn get_page() -> impl IntoResponse {
-    let response = reqwest::get("http://127.0.0.1:3001/")
+    let response = reqwest::get("http://0.0.0.0:3001/")
         .await
         .unwrap()
         .json::<Vec<Contact>>()
@@ -39,7 +37,7 @@ async fn get_page() -> impl IntoResponse {
 async fn post_contact(Form(contact): Form<Contact>) -> impl IntoResponse {
     let client = reqwest::Client::new();
     let response = client
-        .post("http://127.0.0.1:3001/")
+        .post("http://0.0.0.0:3001/")
         .json(&Contact {
             name: contact.name,
             email: contact.email,
@@ -54,7 +52,7 @@ async fn post_contact(Form(contact): Form<Contact>) -> impl IntoResponse {
 async fn remove_contacts(Path((index)): Path<usize>) -> impl IntoResponse {
     let client = reqwest::Client::new();
     let response = client
-        .delete(format!("http://127.0.0.1:3001/{index}"))
+        .delete(format!("http://0.0.0.0:3001/{index}"))
         .send()
         .await
         .unwrap();

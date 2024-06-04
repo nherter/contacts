@@ -17,10 +17,8 @@ async fn main() {
         .route("/", get(get_contacts).post(create_contact))
         .route("/:index", delete(delete_contact));
 
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3001")
-        .await
-        .unwrap();
-    println!("Listening on http://127.0.0.1:3001");
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3001").await.unwrap();
+    println!("Listening on http://0.0.0.0:3001");
     axum::serve(listener, app).await.unwrap();
 }
 
